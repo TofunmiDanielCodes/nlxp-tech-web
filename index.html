@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLXP Technologies — Engineering Abundant Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0B0416;
+    --indigo-deep:#1D0A42;
+    --violet:#6F00FF;
+    --violet-glow:#B26BFF;
+    --white:#FFFFFF;
+    --mist:#B8AED9;
+    --mist-dim:#8478A8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--white);
+    font-family:'IBM Plex Sans', sans-serif;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk', sans-serif;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  a{color:inherit; text-decoration:none;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 6vw;
+    background:linear-gradient(to bottom, rgba(11,4,22,0.9), transparent);
+    backdrop-filter:blur(4px);
+  }
+  .nav-brand{ display:flex; align-items:center; gap:10px; font-size:1.05rem; font-weight:700; }
+  .nav-brand img{ height:28px; width:auto; }
+  .nav-brand span{ color:var(--violet-glow); }
+  .nav-links{ display:flex; gap:2.4rem; font-size:0.78rem; }
+  .nav-links a{ color:var(--mist); transition:color 0.25s; }
+  .nav-links a:hover{ color:var(--white); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    position:relative;
+    padding:120px 6vw 80px;
+    text-align:center;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 8%, rgba(111,0,255,0.28), transparent 70%),
+      var(--void);
+  }
+  .eyebrow{
+    font-size:0.72rem; color:var(--violet-glow);
+    margin-bottom:26px;
+  }
+  .eyebrow::before{ content:"◆ "; }
+  .hero h1{
+    font-size:clamp(2.4rem, 6.4vw, 5.6rem);
+    font-weight:700;
+    line-height:1.02;
+    max-width:16ch;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(100deg, var(--violet-glow), var(--violet) 60%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p{
+    margin-top:26px;
+    max-width:44ch;
+    color:var(--mist);
+    font-size:1.05rem;
+    line-height:1.6;
+  }
+
+  /* circuit fork */
+  .fork-wrap{ width:min(720px, 90vw); margin-top:64px; }
+  .fork-wrap svg{ width:100%; height:auto; display:block; }
+  .trace{
+    fill:none; stroke:var(--mist-dim); stroke-width:1.6;
+    stroke-dasharray:6 500;
+    animation:draw 2.6s ease forwards 0.4s;
+  }
+  .trace.hot{ stroke:var(--violet-glow); }
+  @keyframes draw{ to{ stroke-dashoffset:0; stroke-dasharray:1000 0; } }
+  .node{ fill:var(--violet); opacity:0; animation:pop 0.5s ease forwards; }
+  .node.root{ animation-delay:0.2s; }
+  .node.a{ animation-delay:2.6s; }
+  .node.s{ animation-delay:2.6s; }
+  @keyframes pop{ from{opacity:0; r:0;} to{opacity:1;} }
+  .fork-label{
+    font-family:'IBM Plex Mono', monospace; font-size:11px;
+    fill:var(--mist); opacity:0; animation:fadein 0.6s ease forwards 2.9s;
+  }
+  @keyframes fadein{ to{opacity:1;} }
+
+  .scroll-cue{
+    position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+    font-size:0.65rem; color:var(--mist-dim);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .scroll-cue .line{ width:1px; height:30px; background:linear-gradient(var(--violet-glow), transparent); animation:pulse 1.8s ease infinite; }
+  @keyframes pulse{ 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+
+  /* ---------- ARMS SPLIT ---------- */
+  .arms{
+    display:grid; grid-template-columns:1fr 1fr;
+    min-height:88vh;
+  }
+  @media (max-width:860px){ .arms{ grid-template-columns:1fr; } }
+  .arm{
+    position:relative; padding:90px 5vw 70px;
+    display:flex; flex-direction:column; justify-content:center;
+    border-top:1px solid rgba(184,174,217,0.14);
+    transition:background 0.4s;
+  }
+  .arm.academy{
+    background:linear-gradient(150deg, #150733, var(--void) 75%);
+    border-right:1px solid rgba(184,174,217,0.14);
+  }
+  .arm.solutions{
+    background:linear-gradient(210deg, #1D0A42, var(--void) 75%);
+  }
+  @media (max-width:860px){ .arm.academy{ border-right:none; } }
+  .arm:hover{ background:linear-gradient(150deg, #1c0a3f, var(--void) 80%); }
+  .arm-tag{ font-size:0.68rem; color:var(--violet-glow); margin-bottom:20px; }
+  .arm img.logo{ width:150px; height:auto; margin-bottom:26px; filter:drop-shadow(0 0 22px rgba(111,0,255,0.35)); }
+  .arm h2{ font-size:clamp(1.7rem, 3.4vw, 2.5rem); font-weight:600; margin-bottom:14px; }
+  .arm .motto{ color:var(--violet-glow); font-size:0.95rem; font-style:italic; margin-bottom:18px; }
+  .arm p.desc{ color:var(--mist); line-height:1.7; max-width:46ch; margin-bottom:34px; font-size:0.95rem; }
+  .arm ul.pillars{ list-style:none; margin-bottom:38px; }
+  .arm ul.pillars li{
+    font-size:0.82rem; color:var(--mist); padding:9px 0;
+    border-top:1px solid rgba(184,174,217,0.12);
+    display:flex; gap:12px; align-items:baseline;
+  }
+  .arm ul.pillars li:first-child{ border-top:none; }
+  .arm ul.pillars li .num{ font-family:'IBM Plex Mono', monospace; color:var(--violet-glow); font-size:0.72rem; }
+  .cta{
+    display:inline-flex; align-items:center; gap:10px;
+    width:fit-content;
+    padding:15px 28px;
+    border:1px solid var(--violet);
+    border-radius:2px;
+    font-size:0.8rem; font-weight:500;
+    color:var(--white);
+    background:rgba(111,0,255,0.08);
+    transition:all 0.3s;
+  }
+  .cta:hover{ background:var(--violet); box-shadow:0 0 30px rgba(111,0,255,0.5); transform:translateX(4px); }
+  .cta .arrow{ transition:transform 0.3s; }
+  .cta:hover .arrow{ transform:translateX(3px); }
+
+  /* ---------- STRIP ---------- */
+  .strip{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:0;
+    padding:56px 6vw; border-top:1px solid rgba(184,174,217,0.14);
+    background:var(--indigo-deep);
+  }
+  .strip .stat{ padding:0 44px; text-align:center; }
+  .strip .stat + .stat{ border-left:1px solid rgba(184,174,217,0.2); }
+  .strip .stat b{ display:block; font-family:'Space Grotesk',sans-serif; font-size:1.9rem; color:var(--white); }
+  .strip .stat span{ font-size:0.68rem; color:var(--mist-dim); }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:60px 6vw 40px;
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:30px;
+    border-top:1px solid rgba(184,174,217,0.14);
+  }
+  footer .brand{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; }
+  footer .contact{ display:flex; flex-direction:column; gap:6px; font-size:0.85rem; color:var(--mist); }
+  footer .contact a:hover{ color:var(--violet-glow); }
+  footer .copy{ width:100%; margin-top:34px; font-size:0.7rem; color:var(--mist-dim); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><img src="nlxp-technologies-logo.jpg" alt="NLXP Technologies">NLXP <span>TECHNOLOGIES</span></div>
+  <div class="nav-links">
+    <a href="academy.html">Academy</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow mono">Engineering Abundant Solutions</div>
+  <h1>One root.<br><span class="grad">Two paths forward.</span></h1>
+  <p>NLXP Technologies builds tech talent and builds tech products — a training arm that forges careers, and a solutions arm that ships real work for real businesses.</p>
+
+  <div class="fork-wrap">
+    <svg viewBox="0 0 720 220">
+      <circle class="node root" cx="360" cy="20" r="5"/>
+      <path class="trace" d="M360,20 L360,80 L200,150 L200,190" pathLength="1000"/>
+      <path class="trace hot" d="M360,20 L360,80 L520,150 L520,190" pathLength="1000"/>
+      <circle class="node a" cx="200" cy="190" r="5"/>
+      <circle class="node s" cx="520" cy="190" r="5"/>
+      <text class="fork-label" x="200" y="214" text-anchor="middle">ACADEMY</text>
+      <text class="fork-label" x="520" y="214" text-anchor="middle">SOLUTIONS</text>
+    </svg>
+  </div>
+
+  <div class="scroll-cue"><div class="line"></div>SCROLL</div>
+</section>
+
+<section class="arms">
+
+  <div class="arm academy" id="academy">
+    <div class="arm-tag mono">Training Arm</div>
+    <img class="logo" src="nlxp-logo.jpg" alt="NLXP Tech Academy logo">
+    <h2>NLXP Tech Academy</h2>
+    <div class="motto">"Where Tech Champions are Forged"</div>
+    <p class="desc">Not wishy-washy training and a certificate to collect. Eight schools, twenty-two tracks, real projects graded against industry standards — Merit or Distinction only. No shortcuts.</p>
+    <ul class="pillars">
+      <li><span class="num">01</span> Data, AI &amp; Engineering Schools</li>
+      <li><span class="num">02</span> Hands-on capstones, not theory</li>
+      <li><span class="num">03</span> Full student portal &amp; progress tracking</li>
+      <li><span class="num">04</span> Distinction / Merit grading, real certificates</li>
+    </ul>
+    <a class="cta" href="academy.html">Explore the Academy <span class="arrow">→</span></a>
+  </div>
+
+  <div class="arm solutions" id="solutions">
+    <div class="arm-tag mono">Solutions Arm</div>
+    <img class="logo" src="nlxp-solutions-logo.jpg" alt="NLXP Tech Solutions logo">
+    <h2>NLXP Tech Solutions</h2>
+    <div class="motto">"Smart Solutions. Real Impact. Lasting Value."</div>
+    <p class="desc">Hire NLXP as your dedicated tech team, or buy a ready-to-ship project with real source code and a video walkthrough. Data engineering, AI, dashboards, and full-stack builds — done properly.</p>
+    <ul class="pillars">
+      <li><span class="num">01</span> Ready-to-ship project store</li>
+      <li><span class="num">02</span> Freelance data &amp; software engineering</li>
+      <li><span class="num">03</span> Personal branding &amp; portfolio builds</li>
+      <li><span class="num">04</span> Strategic consulting for SMEs</li>
+    </ul>
+    <a class="cta" href="solutions.html">Explore Solutions <span class="arrow">→</span></a>
+  </div>
+
+</section>
+
+<div class="strip">
+  <div class="stat"><b>8</b><span class="mono">Academy Schools</span></div>
+  <div class="stat"><b>21</b><span class="mono">Career Tracks</span></div>
+  <div class="stat"><b>4</b><span class="mono">Solutions Pillars</span></div>
+  <div class="stat"><b>24h</b><span class="mono">Proposal Turnaround</span></div>
+</div>
+
+<footer id="contact">
+  <div class="brand">NLXP <span style="color:var(--violet-glow);">TECHNOLOGIES</span></div>
+  <div class="contact">
+    <span class="mono" style="color:var(--mist-dim); font-size:0.65rem; margin-bottom:4px;">Get in touch</span>
+    <a href="mailto:TofunmiTech25@gmail.com">TofunmiTech25@gmail.com</a>
+    <a href="tel:+2348102950354">+234 810 295 0354</a>
+    <a href="tel:+2348140597546">+234 814 059 7546</a>
+  </div>
+  <div class="copy">© 2026 NLXP Technologies. All rights reserved.</div>
+</footer>
+
+</body>
+</html>

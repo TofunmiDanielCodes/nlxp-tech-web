@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLXP Tech Academy — Student Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0B0416; --indigo-deep:#1D0A42; --violet:#6F00FF; --violet-glow:#B26BFF;
+    --white:#FFFFFF; --mist:#B8AED9; --mist-dim:#8478A8; --gold:#F5B342; --green:#3EE08A; --red:#FF6B6B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--void); color:var(--white); font-family:'IBM Plex Sans', sans-serif; min-height:100vh; }
+  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; }
+  .mono{ font-family:'IBM Plex Mono', monospace; letter-spacing:0.06em; text-transform:uppercase; }
+  a{ color:inherit; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  /* ================= LOGIN ================= */
+  #login-screen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 5vw;
+    background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(111,0,255,0.28), transparent 70%), var(--void);
+  }
+  .login-card{
+    width:100%; max-width:460px; border:1px solid rgba(184,174,217,0.2); border-radius:6px;
+    padding:44px 38px; background:linear-gradient(160deg, rgba(111,0,255,0.07), transparent);
+  }
+  .login-card .brand{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .login-card .brand img{ height:32px; }
+  .login-card .brand span{ font-weight:700; font-size:1rem; }
+  .login-card h1{ font-size:1.5rem; margin:18px 0 6px; }
+  .login-card p.sub{ color:var(--mist); font-size:0.85rem; margin-bottom:30px; }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:0.7rem; color:var(--mist-dim); margin-bottom:7px; }
+  .field input{
+    width:100%; padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(184,174,217,0.25);
+    border-radius:3px; color:var(--white); font-size:0.88rem; font-family:inherit;
+  }
+  .field select{
+    width:100%; padding:12px 14px; background:#F3EFFB; border:1px solid var(--violet-glow);
+    border-radius:3px; color:#1D0A42; font-size:0.88rem; font-family:inherit;
+  }
+  .field select option, .selector-row select option{ color:#1D0A42; background:#FFFFFF; }
+  .field input:focus, .field select:focus{ outline:none; border-color:var(--violet-glow); }
+  .field-row{ display:flex; gap:12px; }
+  .field-row .field{ flex:1; }
+  .photo-upload{
+    display:flex; align-items:center; gap:14px; padding:12px 14px; border:1px dashed rgba(184,174,217,0.3);
+    border-radius:3px; cursor:pointer;
+  }
+  .photo-upload .preview{ width:44px; height:44px; border-radius:50%; background:var(--indigo-deep); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:var(--mist-dim); }
+  .photo-upload .preview img{ width:100%; height:100%; object-fit:cover; }
+  .photo-upload span{ font-size:0.78rem; color:var(--mist); }
+  .login-btn{
+    width:100%; margin-top:8px; padding:14px; border:none; border-radius:3px; background:var(--violet);
+    color:var(--white); font-size:0.9rem; font-weight:600; transition:all 0.25s;
+  }
+  .login-btn:hover{ background:var(--violet-glow); }
+  .login-note{ margin-top:18px; font-size:0.72rem; color:var(--mist-dim); text-align:center; }
+
+  /* ================= DASHBOARD ================= */
+  #dashboard{ display:none; min-height:100vh; }
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; padding:16px 5vw;
+    border-bottom:1px solid rgba(184,174,217,0.14); background:var(--indigo-deep);
+  }
+  .topbar .who{ display:flex; align-items:center; gap:12px; }
+  .topbar .who img{ width:38px; height:38px; border-radius:50%; object-fit:cover; }
+  .topbar .who .avatar-fallback{ width:38px; height:38px; border-radius:50%; background:var(--violet); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+  .topbar .who .name{ font-size:0.9rem; font-weight:600; }
+  .topbar .who .id{ font-size:0.68rem; color:var(--mist-dim); }
+  .logout{ background:none; border:1px solid rgba(184,174,217,0.3); color:var(--mist); padding:9px 16px; border-radius:3px; font-size:0.75rem; }
+  .logout:hover{ border-color:var(--red); color:var(--red); }
+
+  .tabs{
+    display:flex; flex-wrap:wrap; gap:6px; padding:14px 5vw; background:#150733;
+    border-bottom:1px solid rgba(184,174,217,0.14);
+  }
+  .tab-btn{
+    padding:10px 16px; background:none; border:none; color:var(--mist); font-size:0.76rem;
+    border-radius:3px; white-space:nowrap; transition:all 0.2s;
+  }
+  .tab-btn:hover{ background:rgba(255,255,255,0.05); color:var(--white); }
+  .tab-btn.active{ background:var(--violet); color:var(--white); }
+
+  .tab-content{ padding:50px 6vw; max-width:900px; margin:0 auto; }
+  .panel{ display:none; }
+  .panel.active{ display:block; animation:fadein 0.3s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  .panel h2{ font-size:1.5rem; margin-bottom:8px; }
+  .panel .desc{ color:var(--mist); font-size:0.88rem; margin-bottom:32px; }
+
+  .selector-row{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }
+  .selector-row select{
+    flex:1; min-width:240px; padding:13px 14px; background:#F3EFFB; border:1px solid var(--violet-glow);
+    border-radius:3px; color:#1D0A42; font-size:0.85rem; font-family:inherit;
+  }
+  .go-btn{ padding:13px 26px; background:var(--violet); border:none; border-radius:3px; color:var(--white); font-size:0.82rem; font-weight:600; }
+  .go-btn:hover{ background:var(--violet-glow); }
+  .route-note{ font-size:0.72rem; color:var(--mist-dim); margin-top:10px; }
+
+  .info-box{ border:1px solid rgba(184,174,217,0.2); border-radius:4px; padding:24px; background:rgba(111,0,255,0.05); }
+
+  .announce{ border-left:3px solid var(--violet); padding:14px 18px; margin-bottom:14px; background:rgba(111,0,255,0.05); border-radius:0 4px 4px 0; }
+  .announce .date{ font-size:0.65rem; color:var(--mist-dim); margin-bottom:4px; }
+  .announce p{ font-size:0.87rem; color:var(--mist); }
+
+  .helpdesk-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .help-card{ flex:1; min-width:200px; border:1px solid rgba(184,174,217,0.2); border-radius:4px; padding:22px; text-align:center; }
+  .help-card .mono{ font-size:0.65rem; color:var(--mist-dim); display:block; margin-bottom:10px; }
+  .help-card a{ font-size:0.95rem; }
+  .help-card a:hover{ color:var(--violet-glow); }
+
+  .grade-tiers{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:30px; }
+  @media (max-width:700px){ .grade-tiers{ grid-template-columns:1fr; } }
+  .tier{ border-radius:4px; padding:22px; border:1px solid rgba(184,174,217,0.2); }
+  .tier.distinction{ border-color:var(--violet-glow); background:rgba(178,107,255,0.08); }
+  .tier.merit{ border-color:var(--gold); background:rgba(245,179,66,0.08); }
+  .tier.retry{ border-color:var(--mist-dim); }
+  .tier h3{ font-size:0.95rem; margin-bottom:8px; }
+  .tier p{ font-size:0.78rem; color:var(--mist); line-height:1.5; }
+  .claim-btn{ width:100%; padding:15px; background:var(--violet); border:none; border-radius:3px; color:var(--white); font-weight:600; font-size:0.85rem; }
+  .claim-btn:hover{ background:var(--violet-glow); }
+
+  .progress-bar-wrap{ margin-bottom:34px; }
+  .progress-label{ display:flex; justify-content:space-between; font-size:0.75rem; color:var(--mist); margin-bottom:8px; }
+  .progress-track{ height:10px; background:rgba(184,174,217,0.14); border-radius:6px; overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--violet), var(--violet-glow)); transition:width 0.4s ease; }
+  .module-list{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  @media (max-width:700px){ .module-list{ grid-template-columns:repeat(2,1fr); } }
+  .module{ display:flex; align-items:center; gap:10px; padding:12px 14px; border:1px solid rgba(184,174,217,0.18); border-radius:3px; font-size:0.82rem; }
+  .module input{ accent-color:var(--violet); width:16px; height:16px; }
+
+  .live-msg{ border:1px solid rgba(184,174,217,0.2); border-radius:4px; padding:40px; text-align:center; color:var(--mist); }
+
+  .lecture-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:24px; }
+  @media (max-width:700px){ .lecture-grid{ grid-template-columns:repeat(2,1fr); } }
+  .lecture-card{
+    display:flex; flex-direction:column; gap:6px; padding:16px 18px; text-decoration:none;
+    border:1px solid rgba(184,174,217,0.2); border-radius:4px;
+    background:linear-gradient(160deg, rgba(111,0,255,0.06), transparent); transition:all 0.2s;
+  }
+  .lecture-card:hover{ border-color:var(--violet-glow); background:rgba(111,0,255,0.14); transform:translateY(-2px); }
+  .lecture-card .lecture-num{ font-weight:600; font-size:0.88rem; color:var(--white); }
+  .lecture-card .lecture-go{ font-size:0.68rem; color:var(--violet-glow); }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="brand"><img src="nlxp-logo.jpg" alt="NLXP Tech Academy"><span>NLXP TECH ACADEMY</span></div>
+    <h1>Student Portal</h1>
+    <p class="sub">Log in to access lectures, assignments, capstones, and your progress.</p>
+
+    <div id="login-form">
+      <div class="field-row">
+        <div class="field"><label>Username</label><input type="text" id="in-username"></div>
+        <div class="field"><label>Student ID</label><input type="text" id="in-id"></div>
+      </div>
+      <div class="field"><label>Email Address</label><input type="email" id="in-email"></div>
+      <div class="field"><label>Password</label><input type="password" id="in-password"></div>
+      <div class="field">
+        <label>Course of Study</label>
+        <select id="in-course">
+          <option value="" disabled selected>Select your track</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Portrait Photo</label>
+        <label class="photo-upload" for="in-photo">
+          <div class="preview" id="photo-preview">PHOTO</div>
+          <span id="photo-label">Click to upload a portrait photo</span>
+        </label>
+        <input type="file" id="in-photo" accept="image/*" style="display:none;">
+      </div>
+      <div id="login-error" style="display:none; color:var(--red); font-size:0.78rem; margin-bottom:14px;"></div>
+      <button type="button" id="login-btn" class="login-btn">Log In</button>
+    </div>
+    <div class="login-note">Demo shell — fill in every field to see the dashboard. It does not check credentials against a real database yet; wire it to Supabase / your student database before going live.</div>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="who">
+      <img id="dash-photo" style="display:none;" alt="">
+      <div class="avatar-fallback" id="dash-avatar-fallback">S</div>
+      <div>
+        <div class="name" id="dash-name">Student</div>
+        <div class="id" id="dash-course">—</div>
+      </div>
+    </div>
+    <button class="logout" onclick="logout()">Log Out</button>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="tab-content" id="tab-content"></div>
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // CONFIG — replace TRACKS and set real links in COURSE_LINKS below
+  // ---------------------------------------------------------------
+  const TRACKS = [
+    "Advanced SQL","Data Analysis with AI","Business Analysis with AI",
+    "Python for Data Science","Python for EDA","Applied Data Science",
+    "Applied Data Engineering","Analytics Engineering",
+    "Machine Learning Engineering","Applied Generative AI & Agentic AI",
+    "Software Development (Full Stack)","Frontend Development","Backend Development",
+    "Product Management","UI/UX Design with AI Integration",
+    "Digital Marketing & Analytics","Graphics Design","Video Editing",
+    "Accounting Technology & Data Analytics","Financial Modelling & Valuation","Financial Engineering & Quantitative Analytics"
+  ];
+
+  // 🔧 Fallback link shown until a real per-path link is set in COURSE_LINKS below.
+  const PLACEHOLDER_LINK = "https://drive.google.com/drive/my-drive";
+
+  const courseSelect = document.getElementById('in-course');
+  TRACKS.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    courseSelect.appendChild(opt);
+  });
+
+  let photoDataUrl = null;
+  document.getElementById('in-photo').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      photoDataUrl = ev.target.result;
+      document.getElementById('photo-preview').innerHTML = `<img src="${photoDataUrl}">`;
+      document.getElementById('photo-label').textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const TABS = [
+    {id:"orientation", label:"Orientation & Foundation Module"},
+    {id:"lectures", label:"Lectures"},
+    {id:"assignment", label:"Assignment"},
+    {id:"test", label:"Test"},
+    {id:"capstone", label:"Capstone Projects"},
+    {id:"quiz", label:"Offline Quiz"},
+    {id:"tutorials", label:"Tutorials"},
+    {id:"solutions", label:"Solution Videos"},
+    {id:"webinar", label:"Webinar"},
+    {id:"weekly", label:"Weekly Challenge"},
+    {id:"live", label:"Live Classes"},
+    {id:"announcements", label:"Announcements"},
+    {id:"helpdesk", label:"Helpdesk"},
+    {id:"grading", label:"Grading & Certificate"},
+    {id:"progress", label:"Progress Tracker"},
+  ];
+
+  const tabsEl = document.getElementById('tabs');
+  TABS.forEach((t,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i===0 ? ' active' : '');
+    btn.textContent = t.label;
+    btn.onclick = () => selectTab(t.id, btn);
+    tabsEl.appendChild(btn);
+  });
+
+  function selectTab(id, btnEl){
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  // ---------------------------------------------------------------
+  // Paste real links here, nested under the exact course name as it
+  // appears in TRACKS above. For plain-link tabs (lectures, tutorials,
+  // solutions, capstone, quiz, webinar), e.g.:
+  //   COURSE_LINKS["Data Analysis with AI"].lectures["Training Path 1"] = "https://drive.google.com/...";
+  //   COURSE_LINKS["Data Analysis with AI"].tests["Training Path 1"] = { "Test 1": "https://...", "Test 2": "https://..." };
+  // For assignments, each path takes a richer object instead of a plain URL:
+  //   COURSE_LINKS["Data Analysis with AI"].assignments["Training Path 1"] = {
+  //     title: "📂 Excel Assignment Submission",
+  //     link: "https://forms.gle/xxxx",
+  //     instructions: ["Upload only your excel file", "File name format: ..."]
+  //   };
+  // Anything left blank falls back to PLACEHOLDER_LINK (links) or a
+  // "not available yet" note (assignments).
+  // ---------------------------------------------------------------
+  let currentCourse = "";
+
+  const COURSE_LINKS = {
+    "Data Analysis with AI": {
+      orientation: "https://drive.google.com/drive/folders/1TxW6YEcl0Wmzda4xyzqQv0rPSRuqWGrJ?usp=drive_link",
+      foundation: "https://drive.google.com/drive/folders/1Lgly_RmPOqPinUgeToyD1nFpvEC2jEdE?usp=drive_link",
+      lectures: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1Me8xt939C-jAJUkyHB7ju-5VBvfth_wk?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1qN9gBE-JGe5L8F2CoH-kxUWy99iKvmWI?usp=drive_link"
+      },
+      lecturesBreakdown: {
+        "Training Path 1": {
+          1: "https://drive.google.com/drive/folders/1or7i9RdhWe5QK5rUd0FmBUorU3nli5ek",
+          2: "https://drive.google.com/drive/folders/1qeB4_jLuI-_-zbC-tOupYzA7bui26Hg_",
+          3: "https://drive.google.com/drive/folders/1ySjpEK1XUw6dV3w7Ip-nlB3iXBpmIu-d",
+          4: "https://drive.google.com/drive/folders/1fkGsHXpEP3cSVKIi2N4a8qS52IcAaN2P",
+          5: "https://drive.google.com/drive/folders/1SiGqK0vlut0GykzdbmAGdQ2K-xpuvnxV",
+          6: "https://drive.google.com/drive/folders/1UMA33sZk0urgq5CEyxyFqW0qRFz3Mnhl",
+          7: "https://drive.google.com/drive/folders/1bH_Y1ClVIB1hc0-x6wmH5Mo9bG91q0_1",
+          8: "https://drive.google.com/drive/folders/1d1m8UZeQbVcazAVZty-qxWKZk7LkICM_",
+          9: "https://drive.google.com/drive/folders/19Q0TnM15erBP_BM2lcc7OpuFS3K71vJx",
+          10: "https://drive.google.com/drive/folders/1ohmwxtg3-ar-79x5j8XB6uDhQE4PSQSy",
+          11: "https://drive.google.com/drive/folders/1ifdHdVTjQXJ-Xj1Chl18Gn83dbDh6BmQ",
+          12: "https://drive.google.com/drive/folders/1b9m8noY-Gzwje5MecsP6CocevYAdefdH",
+          13: "https://drive.google.com/drive/folders/166bW0TqU84x8vPJ1t6MvZTtTAMPbVeD9",
+          14: "https://drive.google.com/drive/folders/1NZyEXMiuKk2szHtYWq9DHrX7aIvvfgtR",
+          15: "https://drive.google.com/drive/folders/10AtfmLZU5GRpPR-GfGFdTj0ikAenBIDt"
+        },
+        "Training Path 2": {
+          1: "https://drive.google.com/drive/folders/1GpL5GxT7-xc7gnHVOGxjuQUU5Cx_OShg",
+          2: "https://drive.google.com/drive/folders/1153dOmEh1h4tDl5oRPEwfqoTdFbtd-5G",
+          3: "https://drive.google.com/drive/folders/12wNP-ibLZN4FKyPxOWfri8Kw3dwuCkOA",
+          4: "https://drive.google.com/drive/folders/1yTStBPUoDOuHVJhh7PL8XrsOFAQcrfss",
+          5: "https://drive.google.com/drive/folders/10epolPyGQRV05PqzvDZ6qxt1_zasocu4",
+          6: "https://drive.google.com/drive/folders/1pY9Tmc6nwwSaB2nLkpKaHXBsPTxnc1AS",
+          7: "https://drive.google.com/drive/folders/1nbctrXVNS_IM6U609GjeNRnYw5h0RlaX",
+          8: "https://drive.google.com/drive/folders/16EYYH2NMcH_3kJfh9-6KDHJEse6gBPCw",
+          9: "https://drive.google.com/drive/folders/1A-LstdIFXstNsSbyduMkiE84GXBCVcBi",
+          10: "https://drive.google.com/drive/folders/1XWllvF8zXhb1Squ62NqpMFIrUpj3JTYK",
+          11: "https://drive.google.com/drive/folders/1lcaoO8WlrTzRYNfoK3EBhCSRDdYAFEk5",
+          12: "https://drive.google.com/drive/folders/18v8OExK9y4A09FQFjhO-lHVNf5KgOD-H",
+          13: "https://drive.google.com/drive/folders/1x-vFB_tNmUHMx0tpk1lg1TLcoJOJb1Of",
+          14: "https://drive.google.com/drive/folders/12n9a7nZf_tX9ADgJtejGp6srGVYi14Yk",
+          15: "https://drive.google.com/drive/folders/1fGa2vM0fQghLmya2VsRPFmOI5dLKvgLr"
+        },
+        "Training Path 3": {
+          1: "https://drive.google.com/drive/folders/1ZaEcwbRgaJW2YIWiIw56SnB7Odqw2KhZ",
+          2: "https://drive.google.com/drive/folders/16GPmmeI4rzXXXygbYUULZeOmTasuaHD3",
+          3: "https://drive.google.com/drive/folders/101oOxjBZ5vVcOG_TMGDmBhnx3n0vAVun",
+          4: "https://drive.google.com/drive/folders/1yDRPliEJWyDsDcxqwYfpUUeK8zKdGDPp",
+          5: "https://drive.google.com/drive/folders/1pzcxn1wtwwMKKpcyWHx0N5D3jnsHpPl3",
+          6: "https://drive.google.com/drive/folders/1tNcBAEg6RO3nbj__TRYw6M0_hdy3Xt6Y",
+          7: "https://drive.google.com/drive/folders/1f5JVqkn11vb5ElMxTqoFfMDas68ZH2y_",
+          8: "https://drive.google.com/drive/folders/1EyLz8-Rc_bffjkFx-Cl1IDV-LcYzUBTL",
+          9: "https://drive.google.com/drive/folders/1rP30wl1fqSx3Va84tkLaTl6z_s96iohi",
+          10: "https://drive.google.com/drive/folders/1TsEuyfYbyf2AOMJZ4cC6uPYEZhjhQCic",
+          11: "https://drive.google.com/drive/folders/1tz6K4S3ISVJKhe9L8MySsRdBF5t0IegS",
+          12: "https://drive.google.com/drive/folders/10bjCg1g1UBWAQouGR_msw3QM5k-Juldr",
+          13: "https://drive.google.com/drive/folders/1yvTX6ynujqavI5ovuy4jb30Fhi8CcnqE",
+          14: "https://drive.google.com/drive/folders/1LHnIzH-m_grNbFmUGNBiHVtbSpe3mtN1",
+          15: "https://drive.google.com/drive/folders/1DwTvHDs6Oj_4F-3Z8DcuNOfPVRl-ModW"
+        },
+        "Training Path 4": {
+          1: "https://drive.google.com/drive/folders/1uPJEdDbvxmUAr_X5mNebNN7aqa6kMWky",
+          2: "https://drive.google.com/drive/folders/1HYtS8lSRRcX8dDBvSqesI8FoqJ7RXPFG",
+          3: "https://drive.google.com/drive/folders/1og7Q0zjosjomxWjJsbgBRyAT4dAm4s_W",
+          4: "https://drive.google.com/drive/folders/1GcrUwE7_Jkirw3o7EA79EXvCDGzRKWrQ",
+          5: "https://drive.google.com/drive/folders/1kRbr0eh-qzoBszQymQ-N_rqrFyMWClmS",
+          6: "https://drive.google.com/drive/folders/1StGyzWNlEKqVzZxB8M8kgYvC1Uy-voLX",
+          7: "https://drive.google.com/drive/folders/1SLLKmi59Tmh_r9F8EDlozi3fCkm_mANw",
+          8: "https://drive.google.com/drive/folders/1khFLgFk25bZvxj1fTuShfrL4R7UwvUcL",
+          9: "https://drive.google.com/drive/folders/12A1ATYJ7Hp1Hl9IzJaJhfH1hMcPyTNy0",
+          10: "https://drive.google.com/drive/folders/1WK2njpIU_UdnzFZqLgz33kaBswqtXips",
+          11: "https://drive.google.com/drive/folders/1hTFdrpMyTUqI8PJ9-Zk_l4zQruDmvi42",
+          12: "https://drive.google.com/drive/folders/1D93FPNoXA2A97urBRYngu6bAGJarsgrD",
+          13: "https://drive.google.com/drive/folders/1GXXVQJVQrpvKEAmFBWEU8LX1398pT_XE",
+          14: "https://drive.google.com/drive/folders/14gb7z4uC4nFxhowtnqItRjoutgXKR4Ze",
+          15: "https://drive.google.com/drive/folders/1ESBQVjZATYflZMy8B1TBfKAWHgoZT6d-"
+        }
+      },
+      solutions: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1oKHz9pejZOTIO21k9YZAuXI6phBK391l?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1SqihUyMaXOALjnNO4dpgYVtH2AHNESl6?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/10grs81GZwpZZaMRj1YxONUHUiv-Mss1l?usp=drive_link",
+        "Training Path 4": "https://drive.google.com/drive/folders/1ogaAEkwxI6JtMWj3zZQi7fhiOTGWxq4v?usp=drive_link"
+      },
+      tutorials: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1vJ7ZvZaDHyyvD7mmnrtHaFAcywEooYIx?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/18MvwjKF-ToI7GNZxr-Xx-oDmHelpU62q?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/13-YOTuneqrGTR6qRm7HKQvmJSG6iHFxA?usp=drive_link",
+        "Training Path 4": "https://drive.google.com/drive/folders/1ospn1NmXcWqitVa-q5mW5VmzmtFV5O2w?usp=drive_link"
+      },
+      capstone: {
+        "Training Path 1 Capstone Project": "https://drive.google.com/drive/folders/1vIoqBB8mVrmCTcL2HAD8CYkMn-2HvvDB?usp=drive_link",
+        "Training Path 2 Capstone Project": "https://drive.google.com/drive/folders/1f_or_hIO3FtMFkLYJe8dfvI7vyYQV_4A?usp=drive_link",
+        "Training Path 3 Capstone Project": "https://drive.google.com/drive/folders/19X7dQdvCV5TLNC0Yy6-ZjFul-afTGXVI?usp=drive_link",
+        "Training Path 4 Capstone Project": "https://drive.google.com/drive/folders/1r28rZ8no6wlD5qbay7LwQHRR7z6TTvqV?usp=drive_link"
+      },
+      quiz: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1Lmz8awlyH6BaqgPtCG4YiLq0mW-6nwGn?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1SIlNlpBldlXUQQCUKsOcjHFnZzyprXz6?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/1SFQI0G9fYDI8aLXVIQGCT-jbqWDY3bKw?usp=drive_link",
+        "Training Path 4": "https://drive.google.com/drive/folders/11HkgleCJ6oc8Ce_0FdKdSGM-I2JUU10n?usp=drive_link"
+      },
+      webinar: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1alayw4M5GPALAmlgTxwn2xpjIpu42Tmz?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1f3k1ZC7do-5phDYDuFnCOtZZ0iIMUCDX?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/1YxCzsd669e5AA7cBx4yIlMVHzLihavzc?usp=drive_link",
+        "Training Path 4": "https://drive.google.com/drive/folders/1b6Hhf8nRxzVMkbbxROiabTX9DgvWBveE?usp=drive_link"
+      },
+      weekly: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1CaziWpaYFFnpCY7_Xgo7RKdwOWT7_Gbz?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1ADya-6BH1ux1qUK4jAxFp53zepyMJAO0?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/1EPwgiS3peYc6PMaTkxrAz8KmxZwB8K4A?usp=drive_link",
+        "Training Path 4": "https://drive.google.com/drive/folders/1-UBJbYuduwlWqegT3OThraQrcLMo5cdV?usp=drive_link"
+      },
+      tests: {
+        "Training Path 1": {
+          "Test 1": "https://drive.google.com/drive/folders/1EvY_2rYjzXuKPqD2Z2ihKwGIoupX4pti?usp=drive_link",
+          "Test 2": "https://drive.google.com/drive/folders/1wzKT-MYrja_FEjUJab6rgilUg6I9rpSB?usp=drive_link"
+        },
+        "Training Path 2": {
+          "Test 1": "https://drive.google.com/drive/folders/1k-Kior6uGkLG4FM_leipZ3WhwwfSYY--?usp=drive_link",
+          "Test 2": "https://drive.google.com/drive/folders/1NmeY2fZLKehif597jUiSyCRyo1UpN0ff?usp=drive_link"
+        },
+        "Training Path 3": {
+          "Test 1": "https://drive.google.com/drive/folders/1vR4zrUzjSm8AZxZyko3bKEyx3q1RrhxD?usp=drive_link",
+          "Test 2": "https://drive.google.com/drive/folders/1azhSvzzBk0WMyzlV9HyRDnTBAhhdlcp_?usp=drive_link"
+        },
+        "Training Path 4": {
+          "Test 1": "https://drive.google.com/drive/folders/18rEOWVVE2iksLOP3-J1bTzgxa1gpOCVI?usp=drive_link",
+          "Test 2": "https://drive.google.com/drive/folders/1Dxtp5G6VDJbKtfZATDhXlfWAR1_3YPOx?usp=drive_link"
+        }
+      }
+    },
+    "Business Analysis with AI": {
+      // Training Paths 1-3 are shared with Data Analysis with AI — same folders.
+      lectures: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1Me8xt939C-jAJUkyHB7ju-5VBvfth_wk?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1qN9gBE-JGe5L8F2CoH-kxUWy99iKvmWI?usp=drive_link"
+      },
+      lecturesBreakdown: {
+        "Training Path 1": {
+          1: "https://drive.google.com/drive/folders/1or7i9RdhWe5QK5rUd0FmBUorU3nli5ek",
+          2: "https://drive.google.com/drive/folders/1qeB4_jLuI-_-zbC-tOupYzA7bui26Hg_",
+          3: "https://drive.google.com/drive/folders/1ySjpEK1XUw6dV3w7Ip-nlB3iXBpmIu-d",
+          4: "https://drive.google.com/drive/folders/1fkGsHXpEP3cSVKIi2N4a8qS52IcAaN2P",
+          5: "https://drive.google.com/drive/folders/1SiGqK0vlut0GykzdbmAGdQ2K-xpuvnxV",
+          6: "https://drive.google.com/drive/folders/1UMA33sZk0urgq5CEyxyFqW0qRFz3Mnhl",
+          7: "https://drive.google.com/drive/folders/1bH_Y1ClVIB1hc0-x6wmH5Mo9bG91q0_1",
+          8: "https://drive.google.com/drive/folders/1d1m8UZeQbVcazAVZty-qxWKZk7LkICM_",
+          9: "https://drive.google.com/drive/folders/19Q0TnM15erBP_BM2lcc7OpuFS3K71vJx",
+          10: "https://drive.google.com/drive/folders/1ohmwxtg3-ar-79x5j8XB6uDhQE4PSQSy",
+          11: "https://drive.google.com/drive/folders/1ifdHdVTjQXJ-Xj1Chl18Gn83dbDh6BmQ",
+          12: "https://drive.google.com/drive/folders/1b9m8noY-Gzwje5MecsP6CocevYAdefdH",
+          13: "https://drive.google.com/drive/folders/166bW0TqU84x8vPJ1t6MvZTtTAMPbVeD9",
+          14: "https://drive.google.com/drive/folders/1NZyEXMiuKk2szHtYWq9DHrX7aIvvfgtR",
+          15: "https://drive.google.com/drive/folders/10AtfmLZU5GRpPR-GfGFdTj0ikAenBIDt"
+        },
+        "Training Path 2": {
+          1: "https://drive.google.com/drive/folders/1GpL5GxT7-xc7gnHVOGxjuQUU5Cx_OShg",
+          2: "https://drive.google.com/drive/folders/1153dOmEh1h4tDl5oRPEwfqoTdFbtd-5G",
+          3: "https://drive.google.com/drive/folders/12wNP-ibLZN4FKyPxOWfri8Kw3dwuCkOA",
+          4: "https://drive.google.com/drive/folders/1yTStBPUoDOuHVJhh7PL8XrsOFAQcrfss",
+          5: "https://drive.google.com/drive/folders/10epolPyGQRV05PqzvDZ6qxt1_zasocu4",
+          6: "https://drive.google.com/drive/folders/1pY9Tmc6nwwSaB2nLkpKaHXBsPTxnc1AS",
+          7: "https://drive.google.com/drive/folders/1nbctrXVNS_IM6U609GjeNRnYw5h0RlaX",
+          8: "https://drive.google.com/drive/folders/16EYYH2NMcH_3kJfh9-6KDHJEse6gBPCw",
+          9: "https://drive.google.com/drive/folders/1A-LstdIFXstNsSbyduMkiE84GXBCVcBi",
+          10: "https://drive.google.com/drive/folders/1XWllvF8zXhb1Squ62NqpMFIrUpj3JTYK",
+          11: "https://drive.google.com/drive/folders/1lcaoO8WlrTzRYNfoK3EBhCSRDdYAFEk5",
+          12: "https://drive.google.com/drive/folders/18v8OExK9y4A09FQFjhO-lHVNf5KgOD-H",
+          13: "https://drive.google.com/drive/folders/1x-vFB_tNmUHMx0tpk1lg1TLcoJOJb1Of",
+          14: "https://drive.google.com/drive/folders/12n9a7nZf_tX9ADgJtejGp6srGVYi14Yk",
+          15: "https://drive.google.com/drive/folders/1fGa2vM0fQghLmya2VsRPFmOI5dLKvgLr"
+        },
+        "Training Path 3": {
+          1: "https://drive.google.com/drive/folders/1ZaEcwbRgaJW2YIWiIw56SnB7Odqw2KhZ",
+          2: "https://drive.google.com/drive/folders/16GPmmeI4rzXXXygbYUULZeOmTasuaHD3",
+          3: "https://drive.google.com/drive/folders/101oOxjBZ5vVcOG_TMGDmBhnx3n0vAVun",
+          4: "https://drive.google.com/drive/folders/1yDRPliEJWyDsDcxqwYfpUUeK8zKdGDPp",
+          5: "https://drive.google.com/drive/folders/1pzcxn1wtwwMKKpcyWHx0N5D3jnsHpPl3",
+          6: "https://drive.google.com/drive/folders/1tNcBAEg6RO3nbj__TRYw6M0_hdy3Xt6Y",
+          7: "https://drive.google.com/drive/folders/1f5JVqkn11vb5ElMxTqoFfMDas68ZH2y_",
+          8: "https://drive.google.com/drive/folders/1EyLz8-Rc_bffjkFx-Cl1IDV-LcYzUBTL",
+          9: "https://drive.google.com/drive/folders/1rP30wl1fqSx3Va84tkLaTl6z_s96iohi",
+          10: "https://drive.google.com/drive/folders/1TsEuyfYbyf2AOMJZ4cC6uPYEZhjhQCic",
+          11: "https://drive.google.com/drive/folders/1tz6K4S3ISVJKhe9L8MySsRdBF5t0IegS",
+          12: "https://drive.google.com/drive/folders/10bjCg1g1UBWAQouGR_msw3QM5k-Juldr",
+          13: "https://drive.google.com/drive/folders/1yvTX6ynujqavI5ovuy4jb30Fhi8CcnqE",
+          14: "https://drive.google.com/drive/folders/1LHnIzH-m_grNbFmUGNBiHVtbSpe3mtN1",
+          15: "https://drive.google.com/drive/folders/1DwTvHDs6Oj_4F-3Z8DcuNOfPVRl-ModW"
+        }
+      },
+      solutions: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1oKHz9pejZOTIO21k9YZAuXI6phBK391l?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1SqihUyMaXOALjnNO4dpgYVtH2AHNESl6?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/10grs81GZwpZZaMRj1YxONUHUiv-Mss1l?usp=drive_link"
+      },
+      tutorials: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1vJ7ZvZaDHyyvD7mmnrtHaFAcywEooYIx?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/18MvwjKF-ToI7GNZxr-Xx-oDmHelpU62q?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/13-YOTuneqrGTR6qRm7HKQvmJSG6iHFxA?usp=drive_link"
+      },
+      capstone: {
+        "Training Path 1 Capstone Project": "https://drive.google.com/drive/folders/1vIoqBB8mVrmCTcL2HAD8CYkMn-2HvvDB?usp=drive_link",
+        "Training Path 2 Capstone Project": "https://drive.google.com/drive/folders/1f_or_hIO3FtMFkLYJe8dfvI7vyYQV_4A?usp=drive_link",
+        "Training Path 3 Capstone Project": "https://drive.google.com/drive/folders/19X7dQdvCV5TLNC0Yy6-ZjFul-afTGXVI?usp=drive_link"
+      },
+      quiz: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1Lmz8awlyH6BaqgPtCG4YiLq0mW-6nwGn?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1SIlNlpBldlXUQQCUKsOcjHFnZzyprXz6?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/1SFQI0G9fYDI8aLXVIQGCT-jbqWDY3bKw?usp=drive_link"
+      },
+      webinar: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1alayw4M5GPALAmlgTxwn2xpjIpu42Tmz?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1f3k1ZC7do-5phDYDuFnCOtZZ0iIMUCDX?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/1YxCzsd669e5AA7cBx4yIlMVHzLihavzc?usp=drive_link"
+      },
+      weekly: {
+        "Training Path 1": "https://drive.google.com/drive/folders/1CaziWpaYFFnpCY7_Xgo7RKdwOWT7_Gbz?usp=drive_link",
+        "Training Path 2": "https://drive.google.com/drive/folders/1ADya-6BH1ux1qUK4jAxFp53zepyMJAO0?usp=drive_link",
+        "Training Path 3": "https://drive.google.com/drive/folders/1EPwgiS3peYc6PMaTkxrAz8KmxZwB8K4A?usp=drive_link"
+      },
+      tests: {
+        "Training Path 1": {
+          "Test 1": "https://drive.google.com/drive/folders/1EvY_2rYjzXuKPqD2Z2ihKwGIoupX4pti?usp=drive_link",
+          "Test 2": "https://drive.google.com/drive/folders/1wzKT-MYrja_FEjUJab6rgilUg6I9rpSB?usp=drive_link"
+        },
+        "Training Path 2": {
+          "Test 1": "https://drive.google.com/drive/folders/1k-Kior6uGkLG4FM_leipZ3WhwwfSYY--?usp=drive_link",
+          "Test 2": "https://drive.google.com/drive/folders/1NmeY2fZLKehif597jUiSyCRyo1UpN0ff?usp=drive_link"
+        },
+        "Training Path 3": {
+          "Test 1": "https://drive.google.com/drive/folders/1vR4zrUzjSm8AZxZyko3bKEyx3q1RrhxD?usp=drive_link",
+          "Test 2": "https://drive.google.com/drive/folders/1azhSvzzBk0WMyzlV9HyRDnTBAhhdlcp_?usp=drive_link"
+        }
+      }
+    }
+  };
+
+  function itemListPanel(tabKey, title, itemLabel, desc){
+    const selId = "sel-" + tabKey;
+    const listId = "list-" + tabKey;
+    let opts = '';
+    for(let i=1;i<=20;i++){ opts += `<option value="Training Path ${i}">Training Path ${i}</option>`; }
+    return `
+      <h2>${title}</h2>
+      <p class="desc">${desc}</p>
+      <div class="selector-row">
+        <select id="${selId}" onchange="renderItemList('${tabKey}','${itemLabel}')"><option value="" disabled selected>Select a training path</option>${opts}</select>
+      </div>
+      <div id="${listId}"></div>
+    `;
+  }
+
+  function renderItemList(tabKey, itemLabel){
+    const sel = document.getElementById('sel-' + tabKey);
+    const box = document.getElementById('list-' + tabKey);
+    if(!sel.value){ box.innerHTML = ''; return; }
+    const courseData = COURSE_LINKS[currentCourse];
+    const pathLink = (courseData && courseData[tabKey] && courseData[tabKey][sel.value]) || null;
+    // 🔧 Optional: give one specific item its own folder (different from the
+    // rest of the path) by adding it under "<tabKey>Breakdown", e.g.:
+    //   COURSE_LINKS["Data Analysis with AI"].lecturesBreakdown["Training Path 1"] = { 2: "https://...", 5: "https://..." };
+    // Any item not listed there falls back to the path's general link — and this
+    // works the same way for every course and every training path automatically.
+    const breakdown = (courseData && courseData[tabKey + 'Breakdown'] && courseData[tabKey + 'Breakdown'][sel.value]) || null;
+
+    if(!pathLink && !breakdown){
+      box.innerHTML = `<div class="route-note" style="margin-top:18px;">No ${itemLabel.toLowerCase()} folder loaded yet for ${sel.value}${currentCourse ? ' under ' + currentCourse : ''}. Check back soon.</div>`;
+      return;
+    }
+
+    let cards = '';
+    for(let i=1;i<=15;i++){
+      const link = (breakdown && breakdown[i]) || pathLink;
+      cards += `<a class="lecture-card" href="${link}"><span class="lecture-num">${itemLabel} ${i}</span><span class="lecture-go">Open folder →</span></a>`;
+    }
+    box.innerHTML = `<div class="lecture-grid">${cards}</div><div class="route-note" style="margin-top:18px;">Each ${itemLabel.toLowerCase()} opens its Drive folder — if it holds split parts (2a, 2b) or extra materials, they're all inside.</div>`;
+  }
+
+  function driveSelectorPanel(tabKey, title, desc, labelSuffix=''){
+    const selId = "sel-" + tabKey;
+    const linkId = "link-" + tabKey;
+    let opts = '';
+    for(let i=1;i<=20;i++){
+      const label = `Training Path ${i}${labelSuffix}`;
+      opts += `<option value="${label}">${label}</option>`;
+    }
+    return `
+      <h2>${title}</h2>
+      <p class="desc">${desc}</p>
+      <div class="selector-row">
+        <select id="${selId}" onchange="updateGoLink('${tabKey}','${selId}','${linkId}')"><option value="" disabled selected>Select a training path</option>${opts}</select>
+        <a id="${linkId}" class="go-btn" href="${PLACEHOLDER_LINK}" onclick="return confirmTrackSelected('${selId}')">Go →</a>
+      </div>
+      <div class="route-note">Opens the Google Drive folder configured for your course's training path. Select one first.</div>
+    `;
+  }
+
+  function updateGoLink(tabKey, selId, linkId){
+    const sel = document.getElementById(selId);
+    const link = document.getElementById(linkId);
+    const courseData = COURSE_LINKS[currentCourse];
+    link.href = (courseData && courseData[tabKey] && courseData[tabKey][sel.value]) || PLACEHOLDER_LINK;
+  }
+
+  function showCertMessage(){
+    document.getElementById('cert-message').style.display = 'block';
+  }
+
+  function confirmTrackSelected(selId){
+    const sel = document.getElementById(selId);
+    if(!sel.value){ alert('Select a training path first.'); return false; }
+    return true;
+  }
+
+  function testQuestionSection(){
+    let pathOpts = '';
+    for(let i=1;i<=10;i++){ pathOpts += `<option value="Training Path ${i}">Training Path ${i}</option>`; }
+    return `
+      <h3 style="margin-bottom:8px;">Question Section</h3>
+      <p class="desc" style="margin-bottom:18px;">Pick your training path, then the test, to open its question paper.</p>
+      <div class="selector-row">
+        <select id="sel-test-path" onchange="updateTestLink()"><option value="" disabled selected>Select a training path</option>${pathOpts}</select>
+        <select id="sel-test-num" onchange="updateTestLink()">
+          <option value="" disabled selected>Select a test</option>
+          <option value="Test 1">Test 1</option>
+          <option value="Test 2">Test 2</option>
+        </select>
+      </div>
+      <div class="selector-row">
+        <a id="link-test" class="go-btn" href="${PLACEHOLDER_LINK}" onclick="return confirmTestSelected()">Go →</a>
+      </div>
+      <div class="route-note">Opens the Google Drive folder with that test's questions. Select a training path and a test first.</div>
+    `;
+  }
+
+  function updateTestLink(){
+    const pathSel = document.getElementById('sel-test-path');
+    const testSel = document.getElementById('sel-test-num');
+    const link = document.getElementById('link-test');
+    const courseData = COURSE_LINKS[currentCourse];
+    const pathData = courseData && courseData.tests && courseData.tests[pathSel.value];
+    link.href = (pathData && pathData[testSel.value]) || PLACEHOLDER_LINK;
+  }
+
+  function confirmTestSelected(){
+    const pathSel = document.getElementById('sel-test-path');
+    const testSel = document.getElementById('sel-test-num');
+    if(!pathSel.value || !testSel.value){ alert('Select a training path and a test first.'); return false; }
+    return true;
+  }
+
+  function trackerPanel(kind, asSubsection){
+    // kind is "Assignment" or "Test". When asSubsection is true, renders as a
+    // labeled subsection (h3, no top-level heading) for use inside a larger panel.
+    const lower = kind.toLowerCase();
+    const heading = asSubsection
+      ? `<h3 style="margin-bottom:8px;">Submission Section</h3><p class="desc" style="margin-bottom:18px;">Submit your ${lower}s through the Tofunmi Assignment Tracker.</p>`
+      : `<h2>${kind}</h2><p class="desc">Submit your ${lower}s through the Tofunmi Assignment Tracker.</p>`;
+    return `
+      ${heading}
+      <div class="info-box">
+        <p style="color:var(--mist); font-size:0.9rem; line-height:1.75; margin-bottom:20px;">Make sure you sign up on the Tofunmi Assignment Tracker. The instructor will enroll you for your course module or training path — you'll then see each ${lower}, complete it, upload your file, and submit. Your record keeps updating from there.</p>
+        <p style="color:var(--gold); font-size:0.82rem; font-weight:600; margin-bottom:24px;">Anyone who defaults on ${kind.toLowerCase()} submission will not be issued a certificate.</p>
+        <a class="cta" href="https://assignment-tracker-s-z6jg.bolt.host/">Open the ${kind} Tracker →</a>
+      </div>
+    `;
+  }
+
+  function renderOrientationPanel(){
+    const box = document.getElementById('orientation-content');
+    if(!box) return;
+    const data = COURSE_LINKS[currentCourse];
+    const orientationLink = (data && data.orientation) || PLACEHOLDER_LINK;
+    const foundationLink = (data && data.foundation) || PLACEHOLDER_LINK;
+    const label = currentCourse || 'Your Course';
+    box.innerHTML = `
+      <div class="helpdesk-row">
+        <div class="help-card">
+          <span class="mono">Orientation</span>
+          <a class="cta" href="${orientationLink}">${label} Orientation →</a>
+        </div>
+        <div class="help-card">
+          <span class="mono">Foundation Module</span>
+          <a class="cta" href="${foundationLink}">${label} Foundation Module →</a>
+        </div>
+      </div>
+    `;
+  }
+
+  const content = document.getElementById('tab-content');
+  content.innerHTML = `
+    <div class="panel active" id="panel-orientation">
+      <h2>Orientation &amp; Foundation Module</h2>
+      <p class="desc">Start here — orientation and foundation resources for your course.</p>
+      <div id="orientation-content"><div class="route-note">Log in to see your course's orientation and foundation links.</div></div>
+    </div>
+    <div class="panel" id="panel-lectures">${itemListPanel("lectures","Lectures","Lecture","Pick a training path to open its lecture playlist.")}</div>
+    <div class="panel" id="panel-assignment">${trackerPanel("Assignment")}</div>
+    <div class="panel" id="panel-test">
+      <h2>Test</h2>
+      ${testQuestionSection()}
+      <div style="height:1px; background:rgba(184,174,217,0.14); margin:30px 0;"></div>
+      ${trackerPanel("Test", true)}
+    </div>
+    <div class="panel" id="panel-capstone">
+      ${driveSelectorPanel("capstone","Capstone Projects","Pick a training path to open its capstone project brief and files."," Capstone Project")}
+      <div class="info-box" style="margin-top:30px;">
+        <h3 style="margin-bottom:12px;">Capstone Project Submission</h3>
+        <p style="color:var(--mist); font-size:0.88rem; line-height:1.7; margin-bottom:20px;">To submit your capstone project, head over to the Tofunmi Assignment Tracker, upload and submit your project link — for projects, a Google Drive link is preferred.</p>
+        <a class="cta" href="https://assignment-tracker-s-z6jg.bolt.host/">Open the Capstone Tracker →</a>
+      </div>
+    </div>
+    <div class="panel" id="panel-quiz">${driveSelectorPanel("quiz","Offline Quiz","Pick a training path to download its offline quiz files.")}</div>
+    <div class="panel" id="panel-tutorials">${itemListPanel("tutorials","Tutorials","Tutorial","Pick a training path to open its tutorial playlist.")}</div>
+    <div class="panel" id="panel-solutions">${driveSelectorPanel("solutions","Solution Videos","Pick a training path to open its solution walkthrough videos.")}</div>
+    <div class="panel" id="panel-webinar">${driveSelectorPanel("webinar","Webinar","Pick a training path to open its webinar recordings and materials.")}</div>
+    <div class="panel" id="panel-weekly">${driveSelectorPanel("weekly","Weekly Challenge","Pick a training path to open its weekly challenge.")}</div>
+
+    <div class="panel" id="panel-live">
+      <h2>Live Classes</h2>
+      <p class="desc">Schedule and links appear here when a class is announced.</p>
+      <div class="live-msg">The admin will notify you every time you are to have a Live Class.</div>
+    </div>
+
+    <div class="panel" id="panel-announcements">
+      <h2>Announcements</h2>
+      <p class="desc">Broadcasts and messages from the NLXP Tech Academy team.</p>
+      <div class="announce"><div class="date mono">Pinned</div><p>Welcome to the NLXP Tech Academy Student Portal. Complete your profile and start with Lecture 1 of your track.</p></div>
+      <div class="announce"><div class="date mono">Reminder</div><p>Capstone submissions are graded Distinction, Merit, or Not Yet Satisfied — check the Grading tab for the full standard.</p></div>
+    </div>
+
+    <div class="panel" id="panel-helpdesk">
+      <h2>Helpdesk</h2>
+      <p class="desc">Reach the Academy team directly through any of these channels.</p>
+      <div class="helpdesk-row">
+        <div class="help-card"><span class="mono">Email</span><a href="mailto:TofunmiTech25@gmail.com">TofunmiTech25@gmail.com</a></div>
+        <div class="help-card"><span class="mono">WhatsApp / Call</span><a href="tel:+2348102950354">+234 810 295 0354</a></div>
+        <div class="help-card"><span class="mono">WhatsApp / Call</span><a href="tel:+2348140597546">+234 814 059 7546</a></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-grading">
+      <h2>Grading &amp; Certificate</h2>
+      <p class="desc">NLXP's grading policy — Merit or Distinction only. No shortcuts.</p>
+      <div class="grade-tiers">
+        <div class="tier distinction"><h3>Distinction</h3><p>Reserved for exceptional work and high-level consistency. Certificate issued.</p></div>
+        <div class="tier merit"><h3>Merit</h3><p>Meets all industry qualification standards as a qualified expert. Certificate issued.</p></div>
+        <div class="tier retry"><h3>Not Yet Satisfied</h3><p>Given a grace period to re-submit and raise scores. No certificate until criteria are met.</p></div>
+      </div>
+      <button type="button" class="claim-btn" style="width:100%;" onclick="showCertMessage()">Have you met the requirements? Click here for your Certificate</button>
+      <div id="cert-message" style="display:none; margin-top:16px;" class="info-box">
+        <p style="color:var(--mist); font-size:0.88rem; line-height:1.6;">Your Result and Certificate will be sent to your email and WhatsApp once it is confirmed that you have satisfied all criteria and your class — whether Distinction or Merit — has been determined.</p>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-progress">
+      <h2>Progress Tracker</h2>
+      <p class="desc">Check off completed lectures to update your progress.</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-label"><span>Course Completion</span><span id="progress-pct">0%</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+      <div class="module-list" id="module-list"></div>
+    </div>
+  `;
+
+  // Progress tracker: Lectures 1-15
+  const moduleList = document.getElementById('module-list');
+  for(let i=1;i<=15;i++){
+    const label = document.createElement('label');
+    label.className = 'module';
+    label.innerHTML = `<input type="checkbox" onchange="updateProgress()"> Lecture ${i}`;
+    moduleList.appendChild(label);
+  }
+  function updateProgress(){
+    const boxes = moduleList.querySelectorAll('input[type=checkbox]');
+    const done = [...boxes].filter(b => b.checked).length;
+    const pct = Math.round((done / boxes.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  // 🔧 Adjust this pattern if the official Student ID format changes.
+  // Matches e.g. TD-DGT-NLXP-AP+26-189 — letters-dash-letters-dash-letters-dash-letters+2 digits-dash-digits.
+  const STUDENT_ID_PATTERN = /^TD-DGT-NLXP-AP\+\d{2}-\d{2,4}$/i;
+
+  // ---------------- LOGIN HANDLER ----------------
+  document.getElementById('login-btn').addEventListener('click', function(){
+    const username = document.getElementById('in-username').value.trim();
+    const email = document.getElementById('in-email').value.trim();
+    const password = document.getElementById('in-password').value;
+    const studentId = document.getElementById('in-id').value.trim();
+    const course = document.getElementById('in-course').value;
+    const errorBox = document.getElementById('login-error');
+
+    if(!username || !email || !password || !studentId || !course){
+      errorBox.textContent = 'Please fill in every field, including your Course of Study, before logging in.';
+      errorBox.style.display = 'block';
+      return;
+    }
+    if(!STUDENT_ID_PATTERN.test(studentId)){
+      errorBox.textContent = 'Student ID is invalid.';
+      errorBox.style.display = 'block';
+      return;
+    }
+    errorBox.style.display = 'none';
+    currentCourse = course;
+    renderOrientationPanel();
+
+    document.getElementById('dash-name').textContent = username;
+    document.getElementById('dash-course').textContent = course + ' · ' + studentId;
+
+    if(photoDataUrl){
+      const img = document.getElementById('dash-photo');
+      img.src = photoDataUrl; img.style.display = 'block';
+      document.getElementById('dash-avatar-fallback').style.display = 'none';
+    } else {
+      document.getElementById('dash-avatar-fallback').textContent = username.charAt(0).toUpperCase() || 'S';
+    }
+
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  });
+
+  function logout(){
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    ['in-username','in-id','in-email','in-password'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('in-course').selectedIndex = 0;
+    document.getElementById('photo-preview').innerHTML = 'PHOTO';
+    document.getElementById('photo-label').textContent = 'Click to upload a portrait photo';
+    document.getElementById('login-error').style.display = 'none';
+    photoDataUrl = null;
+    currentCourse = "";
+  }
+</script>
+</body>
+</html>
